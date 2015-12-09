@@ -23,6 +23,16 @@ user 'ejabberd' do
   group 'ejabberd'
 end
 
+bash "install rebar" do
+  code <<-EOH
+    cd ~/
+    git clone git://github.com/rebar/rebar.git
+    cd rebar/
+    ./bootstrap
+    cp rebar /usr/bin/
+  EOH
+end
+
 bash "install ejabberd postgres" do
   code <<-EOH
     cd ~/
