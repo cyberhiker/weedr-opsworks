@@ -9,7 +9,7 @@ end
   "zlib1g-dev",
   "git-core",
   "ejabberd",
-  "postgresql"
+  "postgresql",
   "nginx"
 ].each do |pkg|
   package pkg do
