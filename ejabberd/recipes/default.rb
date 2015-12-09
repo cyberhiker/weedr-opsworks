@@ -1,10 +1,10 @@
-bash "add erlang source to apt sources" do
-  code <<-EOH
-    echo 'deb http://packages.erlang-solutions.com/debian precise contrib' >> /etc/apt/sources.list
-    wget -O - http://packages.erlang-solutions.com/debian/erlang_solutions.asc | apt-key add -
-  EOH
-  not_if "grep asdfsdf /etc/apt/sources.list"
-end
+#bash "add erlang source to apt sources" do
+#  code <<-EOH
+#    echo 'deb http://packages.erlang-solutions.com/debian precise contrib' >> /etc/apt/sources.list
+#    wget -O - http://packages.erlang-solutions.com/debian/erlang_solutions.asc | apt-key add -
+#  EOH
+#  not_if "grep asdfsdf /etc/apt/sources.list"
+#end
 
 bash "update apt" do
   code "apt-get update"
@@ -14,23 +14,17 @@ package "esl-erlang" do
   action :install
 end
 
-
-
-package "git-core" do
+package "ejabberd" do
   action :install
 end
 
-bash "install rebar" do
-  code <<-EOH
-    cd ~/
-    git clone git://github.com/rebar/rebar.git
-    cd rebar/
-    ./bootstrap
-    cp rebar /usr/bin/
-  EOH
+package "nginx"
+  action :install
 end
 
-
+service "nginx" do
+  action :start
+end
 
 group 'ejabberd'
 user 'ejabberd' do
@@ -48,27 +42,41 @@ end
   end
 end
 
-bash "compile ejabberd" do
-  code <<-EOH
-    cd ~/
-    git clone https://github.com/processone/ejabberd.git ejabberd
-    cd ejabberd
-    git checkout -b 2.1.x origin/2.1.x
-    cd src
-    ./configure --enable-odbc --prefix=/usr --enable-user=ejabberd --sysconfdir=/etc --localstatedir=/var --libdir=/usr/lib
-    make install
-  EOH
+package "git-core" do
+  action :install
 end
 
+# bash "install rebar" do
+#   code <<-EOH
+#     cd ~/
+#     git clone git://github.com/rebar/rebar.git
+#     cd rebar/
+#     ./bootstrap
+#     cp rebar /usr/bin/
+#   EOH
+# end
+#
+#
+# bash "compile ejabberd" do
+#   code <<-EOH
+#     cd ~/
+#     git clone https://github.com/processone/ejabberd.git ejabberd
+#     cd ejabberd
+#     git checkout -b 2.1.x origin/2.1.x
+#     cd src
+#     ./configure --enable-odbc --prefix=/usr --enable-user=ejabberd --sysconfdir=/etc --localstatedir=/var --libdir=/usr/lib
+#     make install
+#   EOH
+# end
+#
+#
 
 
-
-bash "install ejabberd mysql" do
+bash "install ejabberd postgres" do
   code <<-EOH
     cd ~/
-    git clone https://github.com/processone/mysql
-    cd mysql/
-    git checkout -b pre_p1 42e8d4c2c38e32358235fe42136c6433fa5aa83e
+    git clone https://github.com/processone/pgsql
+    cd pgsql/
     make
     cp ebin/* /usr/lib/ejabberd/ebin/
   EOH
@@ -104,10 +112,10 @@ template "/etc/ejabberd/ejabberd.cfg" do
   owner "ejabberd"
   variables({
     :jabber_domain      => node[:jabber_domain],
-    :mysql_hostname     => node[:mysql_hostname],
-    :mysql_databasename => node[:mysql_databasename],
-    :mysql_username     => node[:mysql_username],
-    :mysql_password     => node[:mysql_password]
+    :pgsql_hostname     => node[:pgsql_hostname],
+    :pgsql_databasename => node[:pgsql_databasename],
+    :pgsql_username     => node[:pgsql_username],
+    :pgsql_password     => node[:pgsql_password]
   })
 end
 
@@ -121,11 +129,7 @@ template "/etc/ejabberd/inetrc" do
   owner "ejabberd"
 end
 
-package "nginx"
 
-service "nginx" do
-  action :start
-end
 
 cookbook_file "ejabberd.example.pem" do
   path "/etc/ejabberd/ejabberd.pem"
