@@ -9,6 +9,7 @@ end
   "zlib1g-dev",
   "git-core",
   "ejabberd",
+  "postgresql"
   "nginx"
 ].each do |pkg|
   package pkg do
@@ -35,17 +36,17 @@ end
 
 
 
-bash "install mod_admin_extra" do
-  code <<-EOH
-    cd ~
-    git clone git://github.com/processone/ejabberd-contrib.git
-    cd ejabberd-contrib
-    git checkout 2.1.x
-    cd mod_admin_extra
-    ./build.sh
-    cp ebin/* /usr/lib/ejabberd/ebin
-  EOH
-end
+# bash "install mod_admin_extra" do
+#   code <<-EOH
+#     cd ~
+#     git clone git://github.com/processone/ejabberd-contrib.git
+#     cd ejabberd-contrib
+#     git checkout 2.1.x
+#     cd mod_admin_extra
+#     ./build.sh
+#     cp ebin/* /usr/lib/ejabberd/ebin
+#   EOH
+# end
 
 
 
