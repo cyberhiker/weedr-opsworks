@@ -10,67 +10,25 @@ bash "update apt" do
   code "apt-get update"
 end
 
-package "esl-erlang" do
-  action :install
-end
-
-package "ejabberd" do
-  action :install
-end
-
-package "nginx"
-  action :install
-end
-
-service "nginx" do
-  action :start
-end
-
-group 'ejabberd'
-user 'ejabberd' do
-  group 'ejabberd'
-end
-
 [
   "build-essential",
   "libssl-dev",
   "libexpat1-dev",
   "zlib1g-dev",
+  "git-core",
+  "ejabberd",
+  "nginx"
 ].each do |pkg|
   package pkg do
     action :install
   end
 end
 
-package "git-core" do
-  action :install
+
+group 'ejabberd'
+user 'ejabberd' do
+  group 'ejabberd'
 end
-
-# bash "install rebar" do
-#   code <<-EOH
-#     cd ~/
-#     git clone git://github.com/rebar/rebar.git
-#     cd rebar/
-#     ./bootstrap
-#     cp rebar /usr/bin/
-#   EOH
-# end
-#
-#
-# bash "compile ejabberd" do
-#   code <<-EOH
-#     cd ~/
-#     git clone https://github.com/processone/ejabberd.git ejabberd
-#     cd ejabberd
-#     git checkout -b 2.1.x origin/2.1.x
-#     cd src
-#     ./configure --enable-odbc --prefix=/usr --enable-user=ejabberd --sysconfdir=/etc --localstatedir=/var --libdir=/usr/lib
-#     make install
-#   EOH
-# end
-#
-#
-
 
 bash "install ejabberd postgres" do
   code <<-EOH
@@ -142,5 +100,10 @@ end
 
 service "ejabberd" do
   action :enable
+  supports :restart => true
+end
+
+service "nginx" do
+  action :start
   supports :restart => true
 end
