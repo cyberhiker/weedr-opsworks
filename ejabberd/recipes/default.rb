@@ -8,6 +8,7 @@ end
   "libexpat1-dev",
   "zlib1g-dev",
   "git-core",
+  "rebar",
   "ejabberd",
   "postgresql",
   "nginx"
@@ -21,16 +22,6 @@ end
 group 'ejabberd'
 user 'ejabberd' do
   group 'ejabberd'
-end
-
-bash "install rebar" do
-  code <<-EOH
-    cd ~/
-    git clone git://github.com/rebar/rebar.git
-    cd rebar/
-    ./bootstrap
-    cp rebar /usr/bin/
-  EOH
 end
 
 bash "install ejabberd postgres" do
