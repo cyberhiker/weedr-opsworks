@@ -50,8 +50,6 @@ end
 # end
 
 
-
-
 template "/etc/init.d/ejabberd" do
   owner 'root'
   group 'root'

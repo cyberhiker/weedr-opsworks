@@ -20,7 +20,7 @@
   },
   "description": "Configures ejabberd",
   "providing": {
-    "jabber": [
+    "ejabberd": [
 
     ]
   },
